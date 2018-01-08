@@ -1,0 +1,20 @@
+# /
+/classes
+/.manager
+/build
+/.settings
+/dist
+/.Test.scala.swp
+/target
+/lib_managed
+/src_managed
+
+# /project/
+/project/boot
+/project/project/
+/project/target/
+/project/build/target
+
+# Scala
+*.class
+*.log
