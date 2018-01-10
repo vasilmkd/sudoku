@@ -1,5 +1,6 @@
+import Sudoku.Puzzle
+
 object Puzzles {
-  import Sudoku.Puzzle
 
   val puzzle1: Puzzle[Int] = IndexedSeq(
     IndexedSeq(4, 0, 0, 5, 0, 0, 0, 0, 6),

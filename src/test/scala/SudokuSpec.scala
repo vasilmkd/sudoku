@@ -1,8 +1,9 @@
 import org.scalatest._
 
+import Puzzles._
+import Sudoku._
+
 class SudokuSpec extends FlatSpec with Matchers {
-  import Sudoku._
-  import Puzzles._
 
   "isSingle" should "return true only for sets with exactly one element" in {
     isSingle(Set(1)) should be (true)
@@ -21,20 +22,14 @@ class SudokuSpec extends FlatSpec with Matchers {
   }
 
   "replaceNth" should "replace the nth element in each collection" in {
-    replaceNth(IndexedSeq(1, 2, 3), 0, 4) should be (IndexedSeq(4, 2, 3))
-    replaceNth(IndexedSeq(1, 2, 3), 1, 5) should be (IndexedSeq(1, 5, 3))
+    replaceNth(IndexedSeq(1, 2, 3), 0, 4) should be (Some(IndexedSeq(4, 2, 3)))
+    replaceNth(IndexedSeq(1, 2, 3), 1, 5) should be (Some(IndexedSeq(1, 5, 3)))
   }
 
-  it should "throw IndexOutOfBoundsException if an invalid index is specified" in {
-    a [IndexOutOfBoundsException] should be thrownBy {
-      replaceNth(IndexedSeq(), 5, 5)
-    }
-    a [IndexOutOfBoundsException] should be thrownBy {
-      replaceNth(IndexedSeq(1, 2, 3), 5, 5)
-    }
-    a [IndexOutOfBoundsException] should be thrownBy {
-      replaceNth(IndexedSeq(1, 2, 3), -1, 5)
-    }
+  it should "return None if an invalid index is specified" in {
+    replaceNth(IndexedSeq(), 5, 5) should be (None)
+    replaceNth(IndexedSeq(1, 2, 3), 5, 5) should be (None)
+    replaceNth(IndexedSeq(1, 2, 3), -1, 5) should be (None)
   }
 
   "deleteFrom" should "delete the specified value from all sets in the collection" in {
@@ -56,79 +51,69 @@ class SudokuSpec extends FlatSpec with Matchers {
   }
 
   "whichSubmatrix" should "return the corresponding submatrix for the row and column" in {
-    whichSubmatrix(2, 8) should be (2)
-    whichSubmatrix(7, 1) should be (6)
-    whichSubmatrix(8, 8) should be (8)
+    whichSubmatrix(2, 8) should be (Some(2))
+    whichSubmatrix(7, 1) should be (Some(6))
+    whichSubmatrix(8, 8) should be (Some(8))
   }
 
-  it should "throw IllegalArgumentException for invalid row and column indices" in {
-    a [IllegalArgumentException] should be thrownBy {
-      whichSubmatrix(10, 10)
-    }
-    a [IllegalArgumentException] should be thrownBy {
-      whichSubmatrix(-1, -1)
-    }
+  it should "return None for invalid row and column indices" in {
+    whichSubmatrix(10, 10) should be (None)
+    whichSubmatrix(-1, -1) should be (None)
   }
 
   "nthRow" should "return the nth row of the puzzle" in {
-    nthRow(puzzle1, 0) should be (IndexedSeq(4, 0, 0, 5, 0, 0, 0, 0, 6))
-    nthRow(puzzle1, 5) should be (IndexedSeq(7, 0, 6, 0, 0, 3, 1, 0, 8))
-    nthRow(puzzle1, 8) should be (IndexedSeq(0, 0, 3, 0, 8, 0, 0, 0, 4))
+    nthRow(puzzle1, 0) should be (Some(IndexedSeq(4, 0, 0, 5, 0, 0, 0, 0, 6)))
+    nthRow(puzzle1, 5) should be (Some(IndexedSeq(7, 0, 6, 0, 0, 3, 1, 0, 8)))
+    nthRow(puzzle1, 8) should be (Some(IndexedSeq(0, 0, 3, 0, 8, 0, 0, 0, 4)))
   }
 
-  it should "throw IndexOutOfBoundsException if the index is invalid" in {
-    a [IndexOutOfBoundsException] should be thrownBy {
-      nthRow(puzzle1, -1)
-    }
-    a [IndexOutOfBoundsException] should be thrownBy {
-      nthRow(puzzle1, 10)
-    }
+  it should "return None if the index is invalid" in {
+    nthRow(puzzle1, -1) should be (None)
+    nthRow(puzzle1, 10) should be (None)
   }
 
   "nthColumn" should "return the nth column of the puzzle" in {
-    nthColumn(puzzle1, 0) should be (IndexedSeq(4, 0, 1, 0, 0, 7, 0, 0, 0))
-    nthColumn(puzzle1, 5) should be (IndexedSeq(0, 0, 7, 0, 0, 3, 0, 0, 0))
-    nthColumn(puzzle1, 8) should be (IndexedSeq(6, 0, 0, 0, 0, 8, 5, 0, 4))
+    nthColumn(puzzle1, 0) should be (Some(IndexedSeq(4, 0, 1, 0, 0, 7, 0, 0, 0)))
+    nthColumn(puzzle1, 5) should be (Some(IndexedSeq(0, 0, 7, 0, 0, 3, 0, 0, 0)))
+    nthColumn(puzzle1, 8) should be (Some(IndexedSeq(6, 0, 0, 0, 0, 8, 5, 0, 4)))
   }
 
-  it should "throw IndexOutOfBoundsException if the index is invalid" in {
-    a [IndexOutOfBoundsException] should be thrownBy {
-      nthColumn(puzzle1, -1)
-    }
-    a [IndexOutOfBoundsException] should be thrownBy {
-      nthColumn(puzzle1, 10)
-    }
+  it should "return None if the index is invalid" in {
+    nthColumn(puzzle1, -1) should be (None)
+    nthColumn(puzzle1, 10) should be (None)
   }
 
   "nthSubmatrix" should "return the nth submatrix of the puzzle" in {
-    nthSubmatrix(puzzle1, 0) should be (IndexedSeq(4, 0, 0, 0, 0, 0, 1, 0, 9))
-    nthSubmatrix(puzzle1, 5) should be (IndexedSeq(0, 0, 0, 0, 0, 0, 1, 0, 8))
-    nthSubmatrix(puzzle1, 8) should be (IndexedSeq(0, 0, 5, 7, 0, 0, 0, 0, 4))
+    nthSubmatrix(puzzle1, 0) should be (Some(IndexedSeq(4, 0, 0, 0, 0, 0, 1, 0, 9)))
+    nthSubmatrix(puzzle1, 5) should be (Some(IndexedSeq(0, 0, 0, 0, 0, 0, 1, 0, 8)))
+    nthSubmatrix(puzzle1, 8) should be (Some(IndexedSeq(0, 0, 5, 7, 0, 0, 0, 0, 4)))
   }
 
-  it should "throw IllegalArgumentException if the index is invalid" in {
-    a [IllegalArgumentException] should be thrownBy {
-      nthSubmatrix(puzzle1, -1)
-    }
-    a [IllegalArgumentException] should be thrownBy {
-      nthSubmatrix(puzzle1, 10)
-    }
+  it should "return None if the index is invalid" in {
+    nthSubmatrix(puzzle1, -1) should be (None)
+    nthSubmatrix(puzzle1, 10) should be (None)
   }
+
+  private def selfInverse[A](f: Puzzle[A] => Option[Puzzle[A]]): Puzzle[A] => Option[Puzzle[A]] =
+    p => for {
+      fp <- f(p)
+      ffp <- f(fp)
+    } yield ffp
 
   "columns" should "be self inverse" in {
-    columns(columns(puzzle1)) should be (puzzle1)
-    columns(columns(puzzle2)) should be (puzzle2)
-    columns(columns(puzzle3)) should be (puzzle3)
-    columns(columns(puzzle4)) should be (puzzle4)
-    columns(columns(puzzle5)) should be (puzzle5)
+    selfInverse(columns[Int])(puzzle1) should be (Some(puzzle1))
+    selfInverse(columns[Int])(puzzle2) should be (Some(puzzle2))
+    selfInverse(columns[Int])(puzzle3) should be (Some(puzzle3))
+    selfInverse(columns[Int])(puzzle4) should be (Some(puzzle4))
+    selfInverse(columns[Int])(puzzle5) should be (Some(puzzle5))
   }
 
   "submatrices" should "be self inverse" in {
-    submatrices(submatrices(puzzle1)) should be (puzzle1)
-    submatrices(submatrices(puzzle2)) should be (puzzle2)
-    submatrices(submatrices(puzzle3)) should be (puzzle3)
-    submatrices(submatrices(puzzle4)) should be (puzzle4)
-    submatrices(submatrices(puzzle5)) should be (puzzle5)
+    selfInverse(submatrices[Int])(puzzle1) should be (Some(puzzle1))
+    selfInverse(submatrices[Int])(puzzle2) should be (Some(puzzle2))
+    selfInverse(submatrices[Int])(puzzle3) should be (Some(puzzle3))
+    selfInverse(submatrices[Int])(puzzle4) should be (Some(puzzle4))
+    selfInverse(submatrices[Int])(puzzle5) should be (Some(puzzle5))
   }
 
   "onlyOneIn" should "return true if the value can be found only once in the sets of the collection" in {
