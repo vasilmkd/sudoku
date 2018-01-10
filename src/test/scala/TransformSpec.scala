@@ -1,10 +1,11 @@
 import org.scalatest._
 
-class TransformSpec extends FlatSpec with Matchers {
-  import Transform._
-  import Puzzles._
-  import TransformedPuzzles._
+import Puzzles._
+import Transform._
+import TransformedPuzzles._
 
+class TransformSpec extends FlatSpec with Matchers {
+  
   "transformNumber" should "return the number in a set if the number is not zero" in {
     transformNumber(1) should be (Set(1))
     transformNumber(2) should be (Set(2))

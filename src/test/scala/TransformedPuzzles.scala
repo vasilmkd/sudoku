@@ -1,5 +1,6 @@
+import Sudoku.Puzzle
+
 object TransformedPuzzles {
-  import Sudoku.Puzzle
 
   val transformed1: Puzzle[Set[Int]] = IndexedSeq(
     IndexedSeq(Set(4), Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(5), Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(6)),
