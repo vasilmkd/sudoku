@@ -44,9 +44,9 @@ object Sudoku {
     } yield (if (isSingle(s)) s else (s diff v))
   
   /** Returns the index of the submatrix that the field is in. */
-  def whichSubmatrix(r: Int, c: Int): Int =
-    if (r < 0 || c < 0) throw new IllegalArgumentException(s"row = $r, column = $c")
-    else if (r < 3 && c < 3) 0
+  def whichSubmatrix(r: Int, c: Int): Int = {
+    require(r >= 0 && r < 9 && c >= 0 && c < 9)
+    if (r < 3 && c < 3) 0
     else if (r < 3 && c < 6) 1
     else if (r < 3 && c < 9) 2
     else if (r < 6 && c < 3) 3
@@ -54,8 +54,8 @@ object Sudoku {
     else if (r < 6 && c < 9) 5
     else if (r < 9 && c < 3) 6
     else if (r < 9 && c < 6) 7
-    else if (r < 9 && c < 9) 8
-    else throw new IllegalArgumentException(s"row = $r, column = $c")
+    else 8
+  }
   
   /** Returns the nth row of the puzzle. */
   def nthRow[A](p: Puzzle[A], n: Int): IndexedSeq[A] =
@@ -68,7 +68,8 @@ object Sudoku {
     } yield r(n)
 
   /** Returns the nth submatrix of the puzzle. */
-  def nthSubmatrix[A](p: Puzzle[A], n: Int): IndexedSeq[A] =
+  def nthSubmatrix[A](p: Puzzle[A], n: Int): IndexedSeq[A] = {
+    require(n >= 0 && n < 9)
     if (n == 0) p.take(3).flatMap(_.take(3))
     else if (n == 1) p.take(3).flatMap(_.drop(3).take(3))
     else if (n == 2) p.take(3).flatMap(_.drop(6))
@@ -77,8 +78,8 @@ object Sudoku {
     else if (n == 5) p.drop(3).take(3).flatMap(_.drop(6))
     else if (n == 6) p.drop(6).flatMap(_.take(3))
     else if (n == 7) p.drop(6).flatMap(_.drop(3).take(3))
-    else if (n == 8) p.drop(6).flatMap(_.drop(6))
-    else throw new IllegalArgumentException(s"n = $n")
+    else p.drop(6).flatMap(_.drop(6))
+  }
   
   /** Returns all columns of the puzzle. */
   def columns[A](p: Puzzle[A]): Puzzle[A] =
