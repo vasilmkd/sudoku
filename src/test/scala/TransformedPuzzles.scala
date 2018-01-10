@@ -1,4 +1,4 @@
-object Transformed {
+object TransformedPuzzles {
   import Sudoku.Puzzle
 
   val transformed1: Puzzle[Set[Int]] = IndexedSeq(
