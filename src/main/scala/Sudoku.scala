@@ -187,25 +187,17 @@ object Sudoku {
 
   private val correctRow = IndexedSeq(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
-  /** Checks if the current state of the puzzle represents a
-    * possible solution.
-    */
-  def isSolution(p: Puzzle[Int]): Boolean =
-    p.forall(_.forall(_ != 0))
+  private def isSolution(p: Puzzle[Int]): Boolean =
+    p.map(_.sorted).forall(_ == correctRow)
 
   /** Checks if the current state of the puzzle is a correct solution. */
-  def isErrorSolution(p: Puzzle[Int]): Boolean =
-    p.map(_.sorted).exists(_ != correctRow)
-
-  /** Backtracking check. */
-  def checkError(p: Puzzle[Set[Int]]): Boolean =
+  def isCorrect(p: Puzzle[Set[Int]]): Boolean =
     (for {
       it <- Some(inverseTransform(p))
       cs <- columns(it)
       ss <- submatrices(it)
     } yield {
-      isSolution(it) && (isErrorSolution(it) || isErrorSolution(cs) ||
-      isErrorSolution(ss))
+      isSolution(it) && isSolution(cs) && isSolution(ss)
     }).getOrElse(true)
 
   /** Checks if all of the sets in the puzzle have exactly one
@@ -270,9 +262,10 @@ object Sudoku {
     * doing a depth first search for the solution.
     */
   def sudoku(p: Puzzle[Set[Int]]): Option[Puzzle[Set[Int]]] =
-    if (checkError(p)) None
-    else if (isSolved(p)) Some(p)
-    else {
+    if (isSolved(p)) {
+      if (isCorrect(p)) Some(p)
+      else None
+    } else {
       val np = sudokuLoop(p, 0, 0)
       if (p == np) {
         val (r, c, s) = findFirstNonSingle(p)
