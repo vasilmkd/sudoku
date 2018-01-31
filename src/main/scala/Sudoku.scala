@@ -187,15 +187,11 @@ object Sudoku {
 
   private val correctRow = IndexedSeq(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
-  /** Checks if the number is not zero. */
-  def isNotZero(n: Int): Boolean =
-    n != 0
-
   /** Checks if the current state of the puzzle represents a
     * possible solution.
     */
   def isSolution(p: Puzzle[Int]): Boolean =
-    p.forall(_.forall(isNotZero))
+    p.forall(_.forall(_ != 0))
 
   /** Checks if the current state of the puzzle is a correct solution. */
   def isErrorSolution(p: Puzzle[Int]): Boolean =
