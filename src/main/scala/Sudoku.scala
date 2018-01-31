@@ -26,16 +26,11 @@ object Sudoku {
   /** Returns the index of the submatrix that the field is in. */
   def whichSubmatrix(r: Int, c: Int): Option[Int] =
     if (r < 0 || c < 0) None
-    else if (r < 3 && c < 3) Some(0)
-    else if (r < 3 && c < 6) Some(1)
-    else if (r < 3 && c < 9) Some(2)
-    else if (r < 6 && c < 3) Some(3)
-    else if (r < 6 && c < 6) Some(4)
-    else if (r < 6 && c < 9) Some(5)
-    else if (r < 9 && c < 3) Some(6)
-    else if (r < 9 && c < 6) Some(7)
-    else if (r < 9 && c < 9) Some(8)
-    else None
+    else if (r >= 9 || c >= 9) None
+    else {
+      val res = 3 * (r / 3) + (c / 3)
+      Some(res)
+    }
 
   /** Returns the nth row of the puzzle. */
   def nthRow[A](p: Puzzle[A], n: Int): Option[IndexedSeq[A]] =
