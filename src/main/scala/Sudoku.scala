@@ -56,17 +56,19 @@ object Sudoku {
     else if (n == 8) Some(p.drop(6).flatMap(_.drop(6)))
     else None
 
-  /** Returns all columns of the puzzle. */
-  def columns[A](p: Puzzle[A]): Option[Puzzle[A]] = {
-    val seq = for (n <- (0 until 9)) yield nthColumn(p, n)
+  private def sequencePuzzle[A](p: Puzzle[A])(
+      f: (Puzzle[A], Int) => Option[IndexedSeq[A]]): Option[Puzzle[A]] = {
+    val seq = for (n <- (0 until 9)) yield f(p, n)
     sequence(seq)
   }
 
+  /** Returns all columns of the puzzle. */
+  def columns[A](p: Puzzle[A]): Option[Puzzle[A]] =
+    sequencePuzzle(p)(nthColumn)
+
   /** Returns all submatrices of the puzzle. */
-  def submatrices[A](p: Puzzle[A]): Option[Puzzle[A]] = {
-    val seq = for (n <- (0 until 9)) yield nthSubmatrix(p, n)
-    sequence(seq)
-  }
+  def submatrices[A](p: Puzzle[A]): Option[Puzzle[A]] =
+    sequencePuzzle(p)(nthSubmatrix)
 
   /** Checks if the given value is found in only one field in
     * the same collection.
@@ -106,29 +108,29 @@ object Sudoku {
       }
       .getOrElse(false)
 
+  private def patchPuzzle[A](p: Puzzle[A], n: Int, s: IndexedSeq[A])(
+      f: Puzzle[A] => Option[Puzzle[A]]): Option[Puzzle[A]] =
+    for {
+      tfd <- f(p)
+      rep <- replaceNth(tfd, n, s)
+      res <- f(rep)
+    } yield res
+
   /** Replaces a whole row of the puzzle. */
   def patchRow[A](p: Puzzle[A], n: Int, r: IndexedSeq[A]): Option[Puzzle[A]] =
-    replaceNth(p, n, r)
+    patchPuzzle(p, n, r)(Some(_))
 
   /** Replaces a whole column of the puzzle. */
   def patchColumn[A](p: Puzzle[A],
                      n: Int,
                      c: IndexedSeq[A]): Option[Puzzle[A]] =
-    for {
-      cs <- columns(p)
-      rep <- replaceNth(cs, n, c)
-      res <- columns(rep)
-    } yield res
+    patchPuzzle(p, n, c)(columns)
 
   /** Replaces a whole submatrix of the puzzle. */
   def patchSubmatrix[A](p: Puzzle[A],
                         n: Int,
                         s: IndexedSeq[A]): Option[Puzzle[A]] =
-    for {
-      subs <- submatrices(p)
-      rep <- replaceNth(subs, n, s)
-      res <- submatrices(rep)
-    } yield res
+    patchPuzzle(p, n, s)(submatrices)
 
   /**
     * Called when a field with only one potential digit is encountered.
